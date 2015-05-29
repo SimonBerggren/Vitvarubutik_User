@@ -16,6 +16,7 @@ namespace Vitvarubutik_User
     public partial class Main : FixedForm
     {
         private List<int> indexes = new List<int>();
+        private List<int> indexes_Connected = new List<int>();
         private string filter = "";
         private string categories = "";
 
@@ -57,7 +58,7 @@ namespace Vitvarubutik_User
             SelectCategoryList.SelectedIndex = 0;
             string searchText = SearchTextBox.Text;
 
-            filter = 
+            filter =
                 " WHERE Tillverkare LIKE '%" + searchText + "%' OR " +
                 " Modell LIKE '%" + searchText + "%' OR " +
                 " Typ LIKE '%" + searchText + "%' OR " +
@@ -151,11 +152,13 @@ namespace Vitvarubutik_User
         {
             if (ProductList.SelectedIndex < 0) return;
 
+            ConnectedProductList.SelectedIndex = -1;
+
             int id = indexes[ProductList.SelectedIndex];
 
             MySqlDataReader reader = Connection.RunQuery(
-                                    " SELECT Produkt.Tillverkare, Produkt.Modell, Produkt.Typ, Produkt.Energiklass, Produkt.Beskrivning, Produkt.Bild_Länk, " 
-                                  + " IFNULL(CAST(SUM(Produkt.Pris * (1 - ( Kampanj.Rabatt / 100))) AS UNSIGNED), Produkt.Pris), Produkt.Lagerantal FROM IngårI " 
+                                    " SELECT Produkt.Tillverkare, Produkt.Modell, Produkt.Typ, Produkt.Energiklass, Produkt.Beskrivning, Produkt.Bild_Länk, "
+                                  + " IFNULL(CAST(SUM(Produkt.Pris * (1 - ( Kampanj.Rabatt / 100))) AS UNSIGNED), Produkt.Pris), Produkt.Lagerantal FROM IngårI "
                                   + " RIGHT JOIN Produkt ON IngårI.Artikelnummer = Produkt.Artikelnummer LEFT JOIN Kampanj ON Kampanj.KampanjID = IngårI.KampanjID WHERE Produkt.Artikelnummer = " + id + " GROUP BY Produkt.Artikelnummer ");
             if (reader == null) return;
 
@@ -178,6 +181,34 @@ namespace Vitvarubutik_User
                 ProductPicture.Load(reader.GetString(5));
                 PrisLabel.Text = reader.GetString(6);
                 LagerstatusLabel.Text = reader.GetString(7);
+            }
+
+            reader.Close();
+            Connection.CloseConnection();
+
+            GetConnectedProducts();
+        }
+
+        private void GetConnectedProducts()
+        {
+            ConnectedProductList.Items.Clear();
+            indexes_Connected.Clear();
+
+            if (ProductList.SelectedIndex < 0) return;
+
+            int id = indexes[ProductList.SelectedIndex];
+
+            MySqlDataReader reader = Connection.RunQuery(
+                                    " SELECT Produkt.Artikelnummer, Produkt.Tillverkare, Produkt.Modell, Produkt.Typ, IFNULL(CAST(SUM(Produkt.Pris * (1 - ( Kampanj.Rabatt / 100))) AS UNSIGNED), Produkt.Pris) FROM KoppladTill "
+                                  + " LEFT JOIN IngårI ON KoppladTill.KoppladProdukt = IngårI.Artikelnummer "
+                                  + " RIGHT JOIN Produkt ON KoppladTill.KoppladProdukt = Produkt.Artikelnummer LEFT JOIN Kampanj ON Kampanj.KampanjID = IngårI.KampanjID WHERE KoppladTill.VisadProdukt = " + id + " GROUP BY Produkt.Artikelnummer ");
+            if (reader == null) return;
+
+            while (reader.Read())
+            {
+                indexes_Connected.Add(reader.GetInt32(0));
+                string line = reader.GetString(1) + ", " + reader.GetString(2) + ", " + reader.GetString(3) + ", " + " Pris: " + reader.GetString(4);
+                ConnectedProductList.Items.Add(line);
             }
 
             reader.Close();
@@ -208,5 +239,57 @@ namespace Vitvarubutik_User
             Connection.CloseConnection();
         }
 
+        private void ConnectedProductList_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            int index = this.ConnectedProductList.IndexFromPoint(e.Location);
+
+            if (index != System.Windows.Forms.ListBox.NoMatches)
+            {
+                int id = indexes_Connected[ConnectedProductList.SelectedIndex];
+
+                foreach (int i in SelectFilterList.CheckedIndices)
+                {
+                    SelectFilterList.SetItemCheckState(i, CheckState.Unchecked);
+                }
+
+                Predicate<int> findProduct = (int a) => { return a == id; };
+
+                ProductList.SelectedIndex = indexes.FindIndex(findProduct);
+
+                MySqlDataReader reader = Connection.RunQuery(
+                                        " SELECT Produkt.Tillverkare, Produkt.Modell, Produkt.Typ, Produkt.Energiklass, Produkt.Beskrivning, Produkt.Bild_Länk, "
+                                      + " IFNULL(CAST(SUM(Produkt.Pris * (1 - ( Kampanj.Rabatt / 100))) AS UNSIGNED), Produkt.Pris), Produkt.Lagerantal FROM IngårI "
+                                      + " RIGHT JOIN Produkt ON IngårI.Artikelnummer = Produkt.Artikelnummer LEFT JOIN Kampanj ON Kampanj.KampanjID = IngårI.KampanjID WHERE Produkt.Artikelnummer = " + id + " GROUP BY Produkt.Artikelnummer ");
+
+                if (reader == null) return;
+
+                TillverkareLabel.Text = "";
+                ModellLabel.Text = "";
+                KategoriLabel.Text = "";
+                EnergiklassLabel.Text = "";
+                BeskrivningTextBox.Text = "";
+                PrisLabel.Text = "";
+                LagerstatusLabel.Text = "";
+
+
+                while (reader.Read())
+                {
+                    TillverkareLabel.Text = reader.GetString(0);
+                    ModellLabel.Text = reader.GetString(1);
+                    KategoriLabel.Text = reader.GetString(2);
+                    EnergiklassLabel.Text = reader.GetString(3);
+                    BeskrivningTextBox.Text = reader.GetString(4);
+                    ProductPicture.Load(reader.GetString(5));
+                    PrisLabel.Text = reader.GetString(6);
+                    LagerstatusLabel.Text = reader.GetString(7);
+                }
+
+                reader.Close();
+                Connection.CloseConnection();
+
+                GetConnectedProducts();
+                UpdateProducts();
+            }
+        }
     }
 }
