@@ -16,7 +16,6 @@ C:\Users\Simon\Desktop\Vitvarubutik_User\Vitvarubutik_User\bin\Debug\Vitvarubuti
 C:\Users\Simon\Desktop\Vitvarubutik_User\Vitvarubutik_User\bin\Debug\Vitvarubutik_User.pdb
 C:\Users\Simon\Desktop\Vitvarubutik_User\Vitvarubutik_User\bin\Debug\mysql.data.dll
 C:\Users\Simon\Desktop\Vitvarubutik_User\Vitvarubutik_User\obj\Debug\Vitvarubutik_User.csprojResolveAssemblyReference.cache
-C:\Users\Simon\Desktop\Vitvarubutik_User\Vitvarubutik_User\obj\Debug\Vitvarubutik_User.KundForms.MyPurchasesForm.resources
 C:\Users\Simon\Desktop\Vitvarubutik_User\Vitvarubutik_User\obj\Debug\Vitvarubutik_User.Main.resources
 C:\Users\Simon\Desktop\Vitvarubutik_User\Vitvarubutik_User\obj\Debug\Vitvarubutik_User.Properties.Resources.resources
 C:\Users\Simon\Desktop\Vitvarubutik_User\Vitvarubutik_User\obj\Debug\Vitvarubutik_User.csproj.GenerateResource.Cache

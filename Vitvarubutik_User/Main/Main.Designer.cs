@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.MyPurchasesButton = new System.Windows.Forms.Button();
             this.ExitButton = new System.Windows.Forms.Button();
             this.HeaderLabel = new System.Windows.Forms.Label();
             this.ProductList = new System.Windows.Forms.ListBox();
@@ -54,17 +53,6 @@
             this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ProductPicture)).BeginInit();
             this.SuspendLayout();
-            // 
-            // MyPurchasesButton
-            // 
-            this.MyPurchasesButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MyPurchasesButton.Location = new System.Drawing.Point(1060, 12);
-            this.MyPurchasesButton.Name = "MyPurchasesButton";
-            this.MyPurchasesButton.Size = new System.Drawing.Size(132, 52);
-            this.MyPurchasesButton.TabIndex = 1;
-            this.MyPurchasesButton.Text = "Mina köp";
-            this.MyPurchasesButton.UseVisualStyleBackColor = true;
-            this.MyPurchasesButton.Click += new System.EventHandler(this.MyPurchasesButton_Click);
             // 
             // ExitButton
             // 
@@ -324,7 +312,6 @@
             this.Controls.Add(this.ProductList);
             this.Controls.Add(this.HeaderLabel);
             this.Controls.Add(this.ExitButton);
-            this.Controls.Add(this.MyPurchasesButton);
             this.Name = "Main";
             ((System.ComponentModel.ISupportInitialize)(this.ProductPicture)).EndInit();
             this.ResumeLayout(false);
@@ -338,7 +325,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Button MyPurchasesButton;
         private System.Windows.Forms.Button ExitButton;
         private System.Windows.Forms.Label HeaderLabel;
         private System.Windows.Forms.ListBox ProductList;

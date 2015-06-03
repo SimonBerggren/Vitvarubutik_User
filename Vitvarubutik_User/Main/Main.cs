@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Vitvarubutik_User.KundForms;
 using Vitvarubutik_User.Utilities;
 
 namespace Vitvarubutik_User
@@ -30,7 +29,6 @@ namespace Vitvarubutik_User
 
         private void MyPurchasesButton_Click(object sender, EventArgs e)
         {
-            new MyPurchasesForm();
         }
 
         private void SearchTextBox_KeyClicked(object sender, System.Windows.Forms.KeyEventArgs e)
